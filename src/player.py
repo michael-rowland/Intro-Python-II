@@ -10,3 +10,9 @@ class Player:
 
     def __str__(self):
         return f"{self.name} is currently in the {self.current_room}"
+
+    def move(self, direction):
+        if self.current_room.connections[direction] is not None:
+            self.current_room = self.current_room.connections[direction]
+        else:
+            print('Nothing over here')

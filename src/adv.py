@@ -1,7 +1,6 @@
 from player import Player
 from room import Room
-
-# Declare all the rooms
+from textwrap import wrap
 
 room = {
     'outside':  Room("Outside Cave Entrance",
@@ -24,36 +23,34 @@ room = {
 
 
 # Link rooms together
-
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
+room['outside'].connections["n"] = room['foyer']
+room['foyer'].connections["s"] = room['outside']
+room['foyer'].connections["n"] = room['overlook']
+room['foyer'].connections["e"] = room['narrow']
+room['overlook'].connections["s"] = room['foyer']
+room['narrow'].connections["w"] = room['foyer']
+room['narrow'].connections["n"] = room['treasure']
+room['treasure'].connections["s"] = room['narrow']
 
 # name = input("Please input your name: ")
 name = "Michael"
 player = Player(name, room['outside'])
+print(f"Welcome {name}!")
 
-
-def play_game(player=player):
-    while True:
-        print(f"Welcome {name}!")
-        print(player.current_room)
-        return False
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
-
-
-play_game()
+user_is_playing = True
+while user_is_playing:
+    print(player.current_room.name)
+    if player.current_room.name == 'Treasure Chamber':
+        print('Success!')
+        user_is_playing = False
+        break
+    for line in wrap(player.current_room.description, 40):
+        print(line)
+    user_input = input("Which direction do you want to move (n/s/e/w): ")
+    if user_input in ['n', 's', 'e', 'w']:
+        player.move(user_input)
+    elif user_input == 'q':
+        print('Quitting')
+        user_is_playing = False
+    else:
+        print('Incorrect input: requires n, s, e, w (q)')

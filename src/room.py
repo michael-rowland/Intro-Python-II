@@ -9,10 +9,12 @@ class Room:
     ):
         self.name = name
         self.description = description
-        self.n_to = n_to
-        self.e_to = e_to
-        self.s_to = s_to
-        self.w_to = n_to
+        self.connections = {
+            "n": n_to,
+            "e": e_to,
+            "s": s_to,
+            "w": n_to
+        }
 
     def __str__(self):
         return f'Location: {self.name}\n{self.description}'
