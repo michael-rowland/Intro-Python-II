@@ -1,6 +1,9 @@
+from textwrap import wrap
+
+from item import Item
 from player import Player
 from room import Room
-from textwrap import wrap
+
 
 room = {
     'outside':  Room("Outside Cave Entrance",
@@ -21,6 +24,10 @@ room = {
      adventurers. The only exit is to the south."""),
 }
 
+items = {
+    'key': Item("key", "this should unlock something"),
+    'map': Item("map", "directions to something mysterious"),
+}
 
 # Link rooms together
 room['outside'].connections["n"] = room['foyer']
@@ -32,25 +39,57 @@ room['narrow'].connections["w"] = room['foyer']
 room['narrow'].connections["n"] = room['treasure']
 room['treasure'].connections["s"] = room['narrow']
 
-# name = input("Please input your name: ")
-name = "Michael"
+# Populate items
+room['overlook'].items = [items['key']]
+room['foyer'].items = [items['map']]
+
+name = input("Please input your name: ")
 player = Player(name, room['outside'])
 print(f"Welcome {name}!")
+
+available_commands = {'quit', 'move', 'get', 'take', 'drop', 'i', 'inventory'}
+
+
+def help_message():
+    print('Available commands:')
+    for i in available_commands:
+        print(f"* {i} ...")
+
 
 user_is_playing = True
 while user_is_playing:
     print(player.current_room.name)
+
+    # IF WE GET TO TREASURE CHAMBER, SUCCESS, QUIT
     if player.current_room.name == 'Treasure Chamber':
         print('Success!')
         user_is_playing = False
         break
+
+    # PRINT ROOM DESCRIPTION
     for line in wrap(player.current_room.description, 40):
         print(line)
-    user_input = input("Which direction do you want to move (n/s/e/w): ")
-    if user_input in ['n', 's', 'e', 'w']:
-        player.move(user_input)
-    elif user_input == 'q':
-        print('Quitting')
+
+    # PRINT ITEMS IN ROOM
+    if len(player.current_room.items) > 0:
+        print("Items available:")
+        for i in player.current_room.items:
+            print(i)
+
+    user_input = input('# ')
+    instructions = user_input.split(" ")
+
+    if instructions[0] == 'quit':
+        print("Quitting")
         user_is_playing = False
+    elif instructions[0] == 'move':
+        player.move(instructions[1])
+    elif instructions[0] in ['get', 'take']:
+        player.get(instructions[1])
+    elif instructions[0] == 'drop':
+        player.drop(instructions[1])
+    elif instructions[0] in ['i', 'inventory']:
+        player.get_inventory()
     else:
-        print('Incorrect input: requires n, s, e, w (q)')
+        print("Invalid command")
+        help_message()

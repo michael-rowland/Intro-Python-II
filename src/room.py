@@ -5,7 +5,8 @@
 class Room:
 
     def __init__(
-        self, name, description, n_to=None, e_to=None, s_to=None, w_to=None
+        self, name, description, n_to=None, e_to=None, s_to=None, w_to=None,
+        items=[]
     ):
         self.name = name
         self.description = description
@@ -15,6 +16,7 @@ class Room:
             "s": s_to,
             "w": n_to
         }
+        self.items = items
 
     def __str__(self):
         return f'Location: {self.name}\n{self.description}'
